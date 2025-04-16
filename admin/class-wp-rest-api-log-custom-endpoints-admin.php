@@ -103,6 +103,15 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
             'side',
             'default'
         );
+
+        add_meta_box(
+            'endpoint-debugging',
+            __('Debugging Information', 'wp-rest-api-log'),
+            array(__CLASS__, 'render_endpoint_debugging'),
+            WP_REST_API_Log_Custom_Endpoints::POST_TYPE,
+            'normal',
+            'high'
+        );
     }
 
     public static function render_endpoint_config($post) {
@@ -249,6 +258,18 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
         ));
     }
 
+    public static function render_endpoint_debugging($post) {
+        $debugging_info = get_post_meta($post->ID, '_wp_rest_api_debugging_info', true);
+        ?>
+        <div class="endpoint-debugging">
+            <textarea id="debugging_info" name="debugging_info" class="widefat"><?php echo esc_textarea($debugging_info); ?></textarea>
+            <p class="description">
+                <?php _e('Enter debugging information for this endpoint.', 'wp-rest-api-log'); ?>
+            </p>
+        </div>
+        <?php
+    }
+
     public static function save_endpoint($post_id, $post) {
         if (!isset($_POST['endpoint_nonce']) || 
             !wp_verify_nonce($_POST['endpoint_nonce'], 'save_endpoint')) {
@@ -289,6 +310,11 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
             }
         }
         update_post_meta($post_id, '_wp_rest_api_triggers', $triggers);
+
+        // Save debugging information
+        if (isset($_POST['debugging_info'])) {
+            update_post_meta($post_id, '_wp_rest_api_debugging_info', sanitize_textarea_field($_POST['debugging_info']));
+        }
     }
 
     protected static function is_valid_callback($callback) {
@@ -322,6 +348,16 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
 
         // Check if the callback returns a WP_REST_Response or WP_Error
         return preg_match('/return\s+new\s+(WP_REST_Response|WP_Error)\s*\(/', $callback);
+    }
+
+    // Add a new function to handle custom admin list tables
+    public static function handle_custom_admin_list_tables() {
+        // Implementation for handling custom admin list tables
+    }
+
+    // Add a new function to handle custom edit forms
+    public static function handle_custom_edit_forms() {
+        // Implementation for handling custom edit forms
     }
 }
 

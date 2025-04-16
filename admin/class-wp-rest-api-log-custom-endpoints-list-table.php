@@ -23,7 +23,8 @@ class WP_REST_API_Log_Custom_Endpoints_List_Table extends WP_List_Table {
             'method'      => __('Method', 'wp-rest-api-log'),
             'triggers'    => __('Triggers', 'wp-rest-api-log'),
             'logs'        => __('Recent Logs', 'wp-rest-api-log'),
-            'status'      => __('Status', 'wp-rest-api-log')
+            'status'      => __('Status', 'wp-rest-api-log'),
+            'debugging'   => __('Debugging Information', 'wp-rest-api-log')
         ];
     }
 
@@ -39,6 +40,8 @@ class WP_REST_API_Log_Custom_Endpoints_List_Table extends WP_List_Table {
                 return $this->get_log_link($item->ID);
             case 'status':
                 return $this->get_endpoint_status($item->ID);
+            case 'debugging':
+                return $this->get_debugging_info($item->ID);
             default:
                 return print_r($item, true);
         }
@@ -79,6 +82,11 @@ class WP_REST_API_Log_Custom_Endpoints_List_Table extends WP_List_Table {
             '<span class="status-inactive">Inactive</span>';
     }
 
+    protected function get_debugging_info($post_id) {
+        $debugging_info = get_post_meta($post_id, '_wp_rest_api_debugging_info', true);
+        return !empty($debugging_info) ? esc_html($debugging_info) : __('No debugging information available', 'wp-rest-api-log');
+    }
+
     public function prepare_items() {
         $per_page = 20;
         $current_page = $this->get_pagenum();
@@ -97,5 +105,15 @@ class WP_REST_API_Log_Custom_Endpoints_List_Table extends WP_List_Table {
             'per_page'    => $per_page,
             'total_pages' => ceil($query->found_posts / $per_page)
         ]);
+    }
+
+    // Add a new function to handle custom views
+    public function handle_custom_views() {
+        // Implementation for handling custom views
+    }
+
+    // Add a new function to handle custom modals
+    public function handle_custom_modals() {
+        // Implementation for handling custom modals
     }
 }

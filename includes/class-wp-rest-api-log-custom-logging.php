@@ -34,6 +34,7 @@ class WP_REST_API_Log_Custom_Logging {
             add_filter( 'wp-rest-api-log-entry-data', function( $data ) use ( $request ) {
                 $data['custom_endpoint'] = true;
                 $data['trigger_data'] = self::get_trigger_data( $request );
+                $data['debugging_info'] = self::get_debugging_info( $request );
                 return $data;
             });
             return false; // Don't bypass, log this request
@@ -67,5 +68,49 @@ class WP_REST_API_Log_Custom_Logging {
             'key' => get_post_meta( $request->get_param('id'), WP_REST_API_Log_Custom_Endpoints::META_PREFIX . 'trigger_key', true ),
             'value' => get_post_meta( $request->get_param('id'), WP_REST_API_Log_Custom_Endpoints::META_PREFIX . 'trigger_value', true ),
         );
+    }
+
+    /**
+     * Get debugging information for logging
+     * 
+     * @param WP_REST_Request $request Request object
+     * @return string Debugging information
+     */
+    protected static function get_debugging_info( $request ) {
+        return get_post_meta( $request->get_param('id'), '_wp_rest_api_debugging_info', true );
+    }
+
+    /**
+     * Log debugging information
+     * 
+     * @param int $post_id Post ID
+     * @param string $debugging_info Debugging information
+     */
+    public static function log_debugging_info( $post_id, $debugging_info ) {
+        update_post_meta( $post_id, '_wp_rest_api_debugging_info', sanitize_textarea_field( $debugging_info ) );
+    }
+
+    /**
+     * Save debugging information
+     * 
+     * @param int $post_id Post ID
+     * @param string $debugging_info Debugging information
+     */
+    public static function save_debugging_info( $post_id, $debugging_info ) {
+        update_post_meta( $post_id, '_wp_rest_api_debugging_info', sanitize_textarea_field( $debugging_info ) );
+    }
+
+    /**
+     * Handle custom views
+     */
+    public static function handle_custom_views() {
+        // Implementation for handling custom views
+    }
+
+    /**
+     * Handle custom modals
+     */
+    public static function handle_custom_modals() {
+        // Implementation for handling custom modals
     }
 }

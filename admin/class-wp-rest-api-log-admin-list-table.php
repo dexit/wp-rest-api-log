@@ -59,6 +59,7 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin_List_Table' ) ) {
 				'length'     => __( 'Response Length', 'wp-rest-api-log' ),
 				'ip-address' => __( 'IP Address', 'wp-rest-api-log' ),
 				'user'       => __( 'User', 'wp-rest-api-log' ),
+				 'debugging'  => __( 'Debugging Information', 'wp-rest-api-log' ),
 				);
 
 
@@ -104,6 +105,10 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin_List_Table' ) ) {
 						} else {
 							echo esc_html( $entry->ip_address );
 						}
+						break;
+
+					case 'debugging':
+						echo esc_html( $entry->debugging_info );
 						break;
 				}
 
@@ -202,6 +207,24 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin_List_Table' ) ) {
 					$query->set( 'tax_query', $tax_query );
 				}
 			}
+			}
+
+		/**
+		 * Handles custom views.
+		 *
+		 * @return void
+		 */
+		public function handle_custom_views() {
+			// Implementation for handling custom views
+		}
+
+		/**
+		 * Handles custom modals.
+		 *
+		 * @return void
+		 */
+		public function handle_custom_modals() {
+			// Implementation for handling custom modals
 		}
 	}
 }

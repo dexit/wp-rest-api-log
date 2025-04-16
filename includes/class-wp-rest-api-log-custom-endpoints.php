@@ -214,6 +214,10 @@ class WP_REST_API_Log_Custom_Endpoints {
             update_post_meta($post_id, self::META_PREFIX . 'triggers', $endpoint_data['triggers']);
         }
 
+        if (isset($endpoint_data['debugging_info'])) {
+            self::save_debugging_info($post_id, $endpoint_data['debugging_info']);
+        }
+
         $endpoint = get_post($post_id);
         return rest_ensure_response(self::prepare_endpoint_response($endpoint));
     }
@@ -257,6 +261,10 @@ class WP_REST_API_Log_Custom_Endpoints {
             update_post_meta($endpoint->ID, self::META_PREFIX . 'triggers', $endpoint_data['triggers']);
         }
 
+        if (isset($endpoint_data['debugging_info'])) {
+            self::save_debugging_info($endpoint->ID, $endpoint_data['debugging_info']);
+        }
+
         return rest_ensure_response(self::prepare_endpoint_response($endpoint));
     }
 
@@ -297,7 +305,8 @@ class WP_REST_API_Log_Custom_Endpoints {
             'callback' => get_post_meta($endpoint->ID, self::META_PREFIX . 'callback', true),
             'status'   => get_post_meta($endpoint->ID, self::META_PREFIX . 'status', true),
             'triggers' => get_post_meta($endpoint->ID, self::META_PREFIX . 'triggers', true),
-            'logs'     => self::get_endpoint_logs($endpoint->ID)
+            'logs'     => self::get_endpoint_logs($endpoint->ID),
+            'debugging_info' => self::get_debugging_info($endpoint->ID)
         );
     }
 
@@ -414,6 +423,10 @@ class WP_REST_API_Log_Custom_Endpoints {
         if (isset($_POST['wp_rest_api_log_triggers'])) {
             update_post_meta($post_id, self::META_PREFIX . 'triggers', json_decode(stripslashes($_POST['wp_rest_api_log_triggers']), true));
         }
+
+        if (isset($_POST['debugging_info'])) {
+            self::save_debugging_info($post_id, $_POST['debugging_info']);
+        }
     }
 
     /**
@@ -448,5 +461,33 @@ class WP_REST_API_Log_Custom_Endpoints {
         }
 
         return $data;
+    }
+
+    /**
+     * Get debugging information for an endpoint
+     */
+    protected static function get_debugging_info($endpoint_id) {
+        return get_post_meta($endpoint_id, self::META_PREFIX . 'debugging_info', true);
+    }
+
+    /**
+     * Save debugging information for an endpoint
+     */
+    protected static function save_debugging_info($endpoint_id, $debugging_info) {
+        update_post_meta($endpoint_id, self::META_PREFIX . 'debugging_info', sanitize_textarea_field($debugging_info));
+    }
+
+    /**
+     * Handle custom admin list tables
+     */
+    public static function handle_custom_admin_list_tables() {
+        // Implementation for handling custom admin list tables
+    }
+
+    /**
+     * Handle custom edit forms
+     */
+    public static function handle_custom_edit_forms() {
+        // Implementation for handling custom edit forms
     }
 }

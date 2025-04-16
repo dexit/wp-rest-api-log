@@ -109,6 +109,34 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 				'callback'            => array( __CLASS__, 'get_routes' ),
 				'permission_callback' => array( __CLASS__, 'get_permissions_check' ),
 			) );
+
+			// Register the new REST route for debugging information
+			register_rest_route( WP_REST_API_Log_Common::PLUGIN_NAME, '/entry/(?P<id>[\d]+)/debugging', array(
+				'methods'             => array( WP_REST_Server::READABLE ),
+				'callback'            => array( __CLASS__, 'get_debugging_info' ),
+				'permission_callback' => array( __CLASS__, 'get_permissions_check' ),
+				'args'                => array(
+					'id'                    => array(
+						'sanitize_callback'    => 'absint',
+						'validate_callback'    => array( __CLASS__, 'validate_entry_id' ),
+						'default'              => 0,
+					),
+				),
+			) );
+
+			// Register the new REST route for custom views
+			register_rest_route( WP_REST_API_Log_Common::PLUGIN_NAME, '/custom-views', array(
+				'methods'             => array( WP_REST_Server::READABLE ),
+				'callback'            => array( __CLASS__, 'get_custom_views' ),
+				'permission_callback' => array( __CLASS__, 'get_permissions_check' ),
+			) );
+
+			// Register the new REST route for custom modals
+			register_rest_route( WP_REST_API_Log_Common::PLUGIN_NAME, '/custom-modals', array(
+				'methods'             => array( WP_REST_Server::READABLE ),
+				'callback'            => array( __CLASS__, 'get_custom_modals' ),
+				'permission_callback' => array( __CLASS__, 'get_permissions_check' ),
+			) );
 		}
 
 		/**
@@ -450,6 +478,46 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 			}
 
 			return $served;
+		}
+
+		/**
+		 * Handler for getting debugging information.
+		 *
+		 * @param WP_REST_Request $request REST request.
+		 * @return WP_REST_Response
+		 */
+		static public function get_debugging_info( WP_REST_Request $request ) {
+			$entry = self::get_entry( $request['id'] );
+
+			if ( ! $entry ) {
+				return self::invalid_entry_id_error( $request['id'] );
+			}
+
+			$debugging_info = get_post_meta( $entry->ID, '_wp_rest_api_debugging_info', true );
+
+			return rest_ensure_response( array( 'debugging_info' => $debugging_info ) );
+		}
+
+		/**
+		 * Handler for getting custom views.
+		 *
+		 * @param WP_REST_Request $request REST request.
+		 * @return WP_REST_Response
+		 */
+		static public function get_custom_views( WP_REST_Request $request ) {
+			// Implementation for getting custom views
+			return rest_ensure_response( array( 'custom_views' => 'Custom views data' ) );
+		}
+
+		/**
+		 * Handler for getting custom modals.
+		 *
+		 * @param WP_REST_Request $request REST request.
+		 * @return WP_REST_Response
+		 */
+		static public function get_custom_modals( WP_REST_Request $request ) {
+			// Implementation for getting custom modals
+			return rest_ensure_response( array( 'custom_modals' => 'Custom modals data' ) );
 		}
 
 	}
