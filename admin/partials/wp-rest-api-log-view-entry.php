@@ -205,10 +205,17 @@ $download_urls = WP_REST_API_Log_Controller::get_download_urls( $entry );
 			</div>
 		</div>
 
+		<?php do_action( 'wp-rest-api-log-display-entry-before-debugging-info', $entry ); ?>
+
+		<div class="postbox debugging-info">
+			<h3 class="hndle"><span><?php esc_html_e( 'Debugging Information', 'wp-rest-api-log' ); ?></span></h3>
+			<div class="inside">
+				<pre><code><?php echo esc_html( $entry->debugging_info ); ?></code></pre>
+			</div>
+		</div>
+
 		<?php do_action( 'wp-rest-api-log-display-entry-after', $entry ); ?>
 
 	</div>
 
 </div>
-<?php
-

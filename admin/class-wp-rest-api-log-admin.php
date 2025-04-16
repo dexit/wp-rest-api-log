@@ -333,6 +333,45 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin' ) ) {
 			);
 
 			include apply_filters( 'wp-rest-api-log-admin-view-entry-links-template', WP_REST_API_LOG_PATH . 'admin/partials/entry-property-links.php' );
+			}
+
+		/**
+		 * Handles debugging information for a log entry.
+		 *
+		 * @param int $post_id Post ID.
+		 * @return string Debugging information.
+		 */
+		static public function handle_debugging_info( $post_id ) {
+			return get_post_meta( $post_id, '_wp_rest_api_debugging_info', true );
+		}
+
+		/**
+		 * Saves debugging information for a log entry.
+		 *
+		 * @param int $post_id Post ID.
+		 * @param string $debugging_info Debugging information.
+		 * @return void
+		 */
+		static public function save_debugging_info( $post_id, $debugging_info ) {
+			update_post_meta( $post_id, '_wp_rest_api_debugging_info', sanitize_textarea_field( $debugging_info ) );
+			}
+
+		/**
+		 * Handles custom admin list tables.
+		 *
+		 * @return void
+		 */
+		static public function handle_custom_admin_list_tables() {
+			// Implementation for handling custom admin list tables
+		}
+
+		/**
+		 * Handles custom edit forms.
+		 *
+		 * @return void
+		 */
+		static public function handle_custom_edit_forms() {
+			// Implementation for handling custom edit forms
 		}
 	}
 }
