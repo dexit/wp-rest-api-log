@@ -88,4 +88,34 @@ class WP_REST_API_Log_Test_Common extends WP_UnitTestCase {
 		$this->assertNotWPError( $response );
 		$this->assertEquals( 200, $response->get_status() );
 	}
+
+	/**
+	 * Test the get_debugging_info method
+	 */
+	function test_get_debugging_info() {
+		$request = new WP_REST_Request( 'GET', '/wp-rest-api-log/entry/1/debugging' );
+		$response = WP_REST_API_Log_Controller::get_debugging_info( $request );
+		$this->assertNotWPError( $response );
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	/**
+	 * Test the get_custom_views method
+	 */
+	function test_get_custom_views() {
+		$request = new WP_REST_Request( 'GET', '/wp-rest-api-log/custom-views' );
+		$response = WP_REST_API_Log_Controller::get_custom_views( $request );
+		$this->assertNotWPError( $response );
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	/**
+	 * Test the get_custom_modals method
+	 */
+	function test_get_custom_modals() {
+		$request = new WP_REST_Request( 'GET', '/wp-rest-api-log/custom-modals' );
+		$response = WP_REST_API_Log_Controller::get_custom_modals( $request );
+		$this->assertNotWPError( $response );
+		$this->assertEquals( 200, $response->get_status() );
+	}
 }
