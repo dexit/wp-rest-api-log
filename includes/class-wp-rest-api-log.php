@@ -115,7 +115,12 @@ if ( ! class_exists( 'WP_REST_API_Log' ) ) {
 					),
 				);
 
-			do_action( WP_REST_API_Log_Common::PLUGIN_NAME . '-insert', $args );
+			// Error handling for failed log insertions
+			try {
+				do_action( WP_REST_API_Log_Common::PLUGIN_NAME . '-insert', $args );
+			} catch ( Exception $e ) {
+				error_log( 'Failed to insert log entry: ' . $e->getMessage() );
+			}
 
 			return $served;
 		}

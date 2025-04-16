@@ -23,5 +23,10 @@ class WP_REST_API_Log_Test_Taxonomies extends WP_UnitTestCase {
 			$this->assertInstanceOf( '\WP_Taxonomy', get_taxonomy( $taxonomy ) );
 		}
 	}
-}
 
+	function test_taxonomy_registration_errors() {
+		// Simulate a scenario where taxonomy registration fails
+		$taxonomy = 'invalid_taxonomy';
+		$this->assertFalse( register_taxonomy( $taxonomy, 'post' ) );
+	}
+}

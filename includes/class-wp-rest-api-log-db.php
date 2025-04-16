@@ -115,6 +115,11 @@ if ( ! class_exists( 'WP_REST_API_Log_DB' ) ) {
 
 			$post_id = wp_insert_post( $new_post );
 
+			if ( is_wp_error( $post_id ) ) {
+				error_log( 'Failed to insert log entry: ' . $post_id->get_error_message() );
+				return 0;
+			}
+
 			if ( ! empty( $post_id ) ) {
 				$this->insert_post_terms( $post_id, $args );
 				$this->insert_post_meta( $post_id, $args );

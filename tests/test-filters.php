@@ -133,4 +133,18 @@ class WP_REST_API_Log_Test_Filters extends WP_UnitTestCase {
 
 	}
 
+	public function test_invalid_route_filter_handling() {
+		$option_key = 'wp-rest-api-log-settings-routes';
+
+		// Set the options to log only matching routes.
+		$option_value = array(
+			'route-log-matching-mode' => 'log_matches',
+			'route-filters' => "/invalid[regex"
+		);
+
+		update_option( 'wp-rest-api-log-settings-routes', $option_value );
+
+		// Test invalid route filter handling.
+		$this->assertFalse( WP_REST_API_Log_Filters::can_log_route( '/some/route' ), '/some/route' );
+	}
 }

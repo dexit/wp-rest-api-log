@@ -90,6 +90,12 @@ class WP_REST_API_Log_Filters {
 			//0 if it does not, or FALSE if an error occurred.
 			$match = preg_match( '/' . $regex . '/', $route );
 
+			// Error handling for invalid route filters
+			if ( $match === false ) {
+				error_log( 'Invalid route filter: ' . $route_filter );
+				continue;
+			}
+
 			// We can log this if the mode is set to log only matches.
 			if ( 1 === $match && 'log_matches' === $route_logging_mode ) {
 				return true;

@@ -32,5 +32,37 @@ class WP_REST_API_Log_Test_Settings extends WP_UnitTestCase {
 
 	}
 
-}
+	/**
+	 * Test that ElasticPress has default settings
+	 */
+	function test_default_elasticpress_settings() {
 
+		$settings = WP_REST_API_Log_Settings_ElasticPress::get_default_settings();
+		$this->assertNotEmpty( $settings );
+		$this->assertNotEmpty( $settings['elasticpress-enabled'], 'elasticpress-enabled is empty' );
+
+	}
+
+	/**
+	 * Test that help has default settings
+	 */
+	function test_default_help_settings() {
+
+		$settings = WP_REST_API_Log_Settings_Help::get_default_settings();
+		$this->assertNotEmpty( $settings );
+		$this->assertNotEmpty( $settings['help-enabled'], 'help-enabled is empty' );
+
+	}
+
+	/**
+	 * Test that base has default settings
+	 */
+	function test_default_base_settings() {
+
+		$settings = WP_REST_API_Log_Settings_Base::get_default_settings();
+		$this->assertNotEmpty( $settings );
+		$this->assertNotEmpty( $settings['base-enabled'], 'base-enabled is empty' );
+
+	}
+
+}

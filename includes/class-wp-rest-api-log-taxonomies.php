@@ -53,7 +53,12 @@ if ( ! class_exists( 'WP_REST_API_Log_Taxonomies' ) ) {
 
 				$args = apply_filters( WP_REST_API_Log_Common::PLUGIN_NAME . '-register-taxonomy-args', $args, $taxonomy );
 
-				register_taxonomy( $taxonomy, array( WP_REST_API_Log_DB::POST_TYPE ), $args );
+				$result = register_taxonomy( $taxonomy, array( WP_REST_API_Log_DB::POST_TYPE ), $args );
+
+				// Error handling for taxonomy registration errors
+				if ( is_wp_error( $result ) ) {
+					error_log( 'Failed to register taxonomy: ' . $result->get_error_message() );
+				}
 			}
 		}
 	}

@@ -20,7 +20,7 @@ WordPress plugin to log [REST API](http://v2.wp-api.org/) requests and responses
 
 Includes:
 
-- WordPress admin page to view and seasssrch log entries
+- WordPress admin page to view and search log entries
 - API endpoint to access log entries via JSON
 - Filters to customize logging
 - Custom endpoint logging

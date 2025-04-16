@@ -26,9 +26,9 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 					'to'                    => array(
 						'default'              => current_time( 'mysql' ),
 						),
-					// 'fields'                => array(
-					// 	'default'              => 'basic',
-					// 	),
+					 'fields'                => array(
+					 	'default'              => 'basic',
+					 	),
 					'route'                 => array(
 						'default'              => '',
 						),
@@ -36,10 +36,10 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 						'sanitize_callback'    => 'sanitize_key',
 						'default'              => 'exact',
 						),
-					// 'id'                    => array(
-					// 	'sanitize_callback'    => 'absint',
-					// 	'default'              => 0,
-					// 	),
+					 'id'                    => array(
+					 	'sanitize_callback'    => 'absint',
+					 	'default'              => 0,
+					 	),
 					'after-id'              => array(
 						'sanitize_callback'    => 'absint',
 						'default'              => 0,
@@ -56,11 +56,11 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 						'sanitize_callback'    => 'absint',
 						'default'              => 20,
 						),
-					// 'response_type'         => array(
-					// 	'default'           => 'json',
-					// 	),
-					// 'params'                => array(
-					// 	),
+					 'response_type'         => array(
+					 	'default'           => 'json',
+					 	),
+					 'params'                => array(
+					 	),
 				),
 			) );
 
@@ -82,9 +82,9 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 				'methods'             => array( WP_REST_Server::DELETABLE ),
 				'callback'            => array( __CLASS__, 'delete_items' ),
 				'permission_callback' => array( __CLASS__, 'delete_items_permissions_check' ),
-				'args'                => array( // TODO refator delete, this won't work with $_REQUESTs
+				'args'                => array(
 					'older-than-seconds'       => array(
-						'sanitize_callback'    => 'absint',  // TODO add validate callback
+						'sanitize_callback'    => 'absint',
 						'default'              => DAY_IN_SECONDS * 30,
 					),
 				),
@@ -295,13 +295,12 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 
 
 		static public function delete_items( WP_REST_Request $request ) {
-			// TODO refactor
-			$args = array(
-				'older_than_seconds'  => $request['older-than-seconds'],
+				$args = array(
+					'older_than_seconds'  => isset( $_REQUEST['older-than-seconds'] ) ? absint( $_REQUEST['older-than-seconds'] ) : DAY_IN_SECONDS * 30,
 				);
-
-			$db = new WP_REST_API_Log_DB();
-			return rest_ensure_response( new WP_REST_API_Log_Delete_Response( $db->delete( $args ) ) );
+			
+				$db = new WP_REST_API_Log_DB();
+				return rest_ensure_response( new WP_REST_API_Log_Delete_Response( $db->delete( $args ) ) );
 		}
 
 		/**

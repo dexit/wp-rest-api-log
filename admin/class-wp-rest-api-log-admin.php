@@ -80,6 +80,23 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin' ) ) {
 
 			wp_register_script( 'wp-rest-api-log-admin', WP_REST_API_LOG_URL . 'dist/js/admin.js', 'jquery', WP_REST_API_Log_Common::VERSION );
 			wp_register_style( 'wp-rest-api-log-admin', WP_REST_API_LOG_URL . 'dist/css/admin.css', '', WP_REST_API_Log_Common::VERSION );
+
+			// Error handling for failed script registrations
+			if ( ! wp_script_is( 'wp-rest-api-log-admin-highlight-js', 'registered' ) ) {
+				error_log( 'Failed to register wp-rest-api-log-admin-highlight-js script.' );
+			}
+			if ( ! wp_style_is( 'wp-rest-api-log-admin-highlight-js', 'registered' ) ) {
+				error_log( 'Failed to register wp-rest-api-log-admin-highlight-js style.' );
+			}
+			if ( ! wp_script_is( 'wp-rest-api-log-admin-clipboard-js', 'registered' ) ) {
+				error_log( 'Failed to register wp-rest-api-log-admin-clipboard-js script.' );
+			}
+			if ( ! wp_script_is( 'wp-rest-api-log-admin', 'registered' ) ) {
+				error_log( 'Failed to register wp-rest-api-log-admin script.' );
+			}
+			if ( ! wp_style_is( 'wp-rest-api-log-admin', 'registered' ) ) {
+				error_log( 'Failed to register wp-rest-api-log-admin style.' );
+			}
 		}
 
 		/**
@@ -280,6 +297,23 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin' ) ) {
 
 			wp_enqueue_script( 'wp-rest-api-log-admin' );
 			wp_enqueue_style(  'wp-rest-api-log-admin' );
+
+			// Error handling for failed script enqueues
+			if ( ! wp_script_is( 'wp-rest-api-log-admin-highlight-js', 'enqueued' ) ) {
+				error_log( 'Failed to enqueue wp-rest-api-log-admin-highlight-js script.' );
+			}
+			if ( ! wp_style_is( 'wp-rest-api-log-admin-highlight-js', 'enqueued' ) ) {
+				error_log( 'Failed to enqueue wp-rest-api-log-admin-highlight-js style.' );
+			}
+			if ( ! wp_script_is( 'wp-rest-api-log-admin-clipboard-js', 'enqueued' ) ) {
+				error_log( 'Failed to enqueue wp-rest-api-log-admin-clipboard-js script.' );
+			}
+			if ( ! wp_script_is( 'wp-rest-api-log-admin', 'enqueued' ) ) {
+				error_log( 'Failed to enqueue wp-rest-api-log-admin script.' );
+			}
+			if ( ! wp_style_is( 'wp-rest-api-log-admin', 'enqueued' ) ) {
+				error_log( 'Failed to enqueue wp-rest-api-log-admin style.' );
+			}
 		}
 
 		/**

@@ -269,7 +269,11 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
         update_post_meta($post_id, '_wp_rest_api_status', sanitize_text_field($_POST['status']));
         
         // Save callback code
-        update_post_meta($post_id, '_wp_rest_api_callback', wp_kses_post($_POST['callback']));
+        $callback = wp_kses_post($_POST['callback']);
+        if (!self::is_valid_callback($callback)) {
+            wp_die(__('Invalid callback code. Please ensure it is valid PHP and returns a WP_REST_Response or WP_Error.', 'wp-rest-api-log'));
+        }
+        update_post_meta($post_id, '_wp_rest_api_callback', $callback);
         
         // Save triggers
         $triggers = array();
@@ -285,6 +289,39 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
             }
         }
         update_post_meta($post_id, '_wp_rest_api_triggers', $triggers);
+    }
+
+    protected static function is_valid_callback($callback) {
+        // Check if the callback code is valid PHP
+        $braces = 0;
+        $in_string = 0;
+        $tokens = token_get_all('<?php ' . $callback);
+        foreach ($tokens as $token) {
+            if (is_array($token)) {
+                switch ($token[0]) {
+                    case T_CURLY_OPEN:
+                    case T_DOLLAR_OPEN_CURLY_BRACES:
+                    case T_STRING_VARNAME:
+                        ++$braces;
+                        break;
+                }
+            } else {
+                if ($token === '{') {
+                    ++$braces;
+                } elseif ($token === '}') {
+                    if ($braces === 0) {
+                        return false;
+                    }
+                    --$braces;
+                }
+            }
+        }
+        if ($braces !== 0) {
+            return false;
+        }
+
+        // Check if the callback returns a WP_REST_Response or WP_Error
+        return preg_match('/return\s+new\s+(WP_REST_Response|WP_Error)\s*\(/', $callback);
     }
 }
 
