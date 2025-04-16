@@ -125,6 +125,12 @@ if ( ! class_exists( 'WP_REST_API_Log_Settings_Routes' ) ) {
 				}
 			}
 
+			// Sanitize route filters.
+			if ( isset( $settings['route-filters'] ) ) {
+				$settings['route-filters'] = array_map( 'sanitize_text_field', explode( "\n", $settings['route-filters'] ) );
+				$settings['route-filters'] = implode( "\n", $settings['route-filters'] );
+			}
+
 			return $settings;
 		}
 

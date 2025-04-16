@@ -14,7 +14,12 @@ if ( ! class_exists( 'WP_REST_API_Log_Post_Type' ) ) {
 
 			$args = self::get_post_type_args();
 
-			register_post_type( WP_REST_API_Log_DB::POST_TYPE, $args );
+			$result = register_post_type( WP_REST_API_Log_DB::POST_TYPE, $args );
+
+			// Error handling for post type registration
+			if ( is_wp_error( $result ) ) {
+				error_log( 'Failed to register custom post type: ' . $result->get_error_message() );
+			}
 		}
 
 

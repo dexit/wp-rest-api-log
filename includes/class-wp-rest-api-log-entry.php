@@ -101,9 +101,15 @@ if ( ! class_exists( 'WP_REST_API_Log' ) ) {
 			if ( is_object( $post ) ) {
 				$this->_post = $post;
 				$this->load();
+				$this->validate();
 			}
 		}
 
+		private function validate() {
+			if ( empty( $this->ID ) || empty( $this->route ) || empty( $this->time ) ) {
+				throw new Exception( 'Invalid post data' );
+			}
+		}
 
 		private function load() {
 
@@ -167,4 +173,3 @@ if ( ! class_exists( 'WP_REST_API_Log' ) ) {
 	}
 
 }
-

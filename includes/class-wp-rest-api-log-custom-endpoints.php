@@ -90,7 +90,7 @@ class WP_REST_API_Log_Custom_Endpoints {
             $callback = get_post_meta($endpoint->ID, self::META_PREFIX . 'callback', true);
 
             if ($route && $method && $callback) {
-                register_rest_route('wp-rest-api-log/v1', $route, array(
+                $result = register_rest_route('wp-rest-api-log/v1', $route, array(
                     'methods'             => $method,
                     'callback'            => function($request) use ($endpoint, $callback) {
                         return self::execute_endpoint_callback($endpoint, $callback, $request);
@@ -99,6 +99,10 @@ class WP_REST_API_Log_Custom_Endpoints {
                         return self::check_trigger_conditions($endpoint, $request);
                     }
                 ));
+
+                if (is_wp_error($result)) {
+                    error_log('Failed to register dynamic endpoint: ' . $route);
+                }
             }
         }
     }
@@ -308,5 +312,141 @@ class WP_REST_API_Log_Custom_Endpoints {
             'posts_per_page' => $limit,
             'post_title'     => $route
         ));
+    }
+
+    /**
+     * Execute the endpoint callback
+     */
+    protected static function execute_endpoint_callback($endpoint, $callback, $request) {
+        $callback_function = create_function('', $callback);
+        if (is_callable($callback_function)) {
+            return call_user_func($callback_function, $request);
+        } else {
+            return new WP_Error(
+                'invalid_callback',
+                __('Invalid callback function', 'wp-rest-api-log'),
+                array('status' => 500)
+            );
+        }
+    }
+
+    /**
+     * Add meta boxes for endpoint management
+     */
+    public static function add_meta_boxes() {
+        add_meta_box(
+            'wp-rest-api-log-endpoint-meta',
+            __('Endpoint Details', 'wp-rest-api-log'),
+            array( __CLASS__, 'render_endpoint_meta_box' ),
+            self::POST_TYPE,
+            'normal',
+            'high'
+        );
+    }
+
+    /**
+     * Render the endpoint meta box
+     */
+    public static function render_endpoint_meta_box($post) {
+        wp_nonce_field('wp_rest_api_log_save_endpoint_meta', 'wp_rest_api_log_endpoint_meta_nonce');
+
+        $route = get_post_meta($post->ID, self::META_PREFIX . 'route', true);
+        $method = get_post_meta($post->ID, self::META_PREFIX . 'method', true);
+        $callback = get_post_meta($post->ID, self::META_PREFIX . 'callback', true);
+        $status = get_post_meta($post->ID, self::META_PREFIX . 'status', true);
+        $triggers = get_post_meta($post->ID, self::META_PREFIX . 'triggers', true);
+
+        ?>
+        <p>
+            <label for="wp_rest_api_log_route"><?php _e('Route', 'wp-rest-api-log'); ?></label>
+            <input type="text" id="wp_rest_api_log_route" name="wp_rest_api_log_route" value="<?php echo esc_attr($route); ?>" class="widefat">
+        </p>
+        <p>
+            <label for="wp_rest_api_log_method"><?php _e('Method', 'wp-rest-api-log'); ?></label>
+            <input type="text" id="wp_rest_api_log_method" name="wp_rest_api_log_method" value="<?php echo esc_attr($method); ?>" class="widefat">
+        </p>
+        <p>
+            <label for="wp_rest_api_log_callback"><?php _e('Callback', 'wp-rest-api-log'); ?></label>
+            <textarea id="wp_rest_api_log_callback" name="wp_rest_api_log_callback" class="widefat"><?php echo esc_textarea($callback); ?></textarea>
+        </p>
+        <p>
+            <label for="wp_rest_api_log_status"><?php _e('Status', 'wp-rest-api-log'); ?></label>
+            <select id="wp_rest_api_log_status" name="wp_rest_api_log_status" class="widefat">
+                <option value="active" <?php selected($status, 'active'); ?>><?php _e('Active', 'wp-rest-api-log'); ?></option>
+                <option value="inactive" <?php selected($status, 'inactive'); ?>><?php _e('Inactive', 'wp-rest-api-log'); ?></option>
+            </select>
+        </p>
+        <p>
+            <label for="wp_rest_api_log_triggers"><?php _e('Triggers', 'wp-rest-api-log'); ?></label>
+            <textarea id="wp_rest_api_log_triggers" name="wp_rest_api_log_triggers" class="widefat"><?php echo esc_textarea(json_encode($triggers, JSON_PRETTY_PRINT)); ?></textarea>
+        </p>
+        <?php
+    }
+
+    /**
+     * Save endpoint meta data
+     */
+    public static function save_endpoint_meta($post_id) {
+        if (!isset($_POST['wp_rest_api_log_endpoint_meta_nonce']) || !wp_verify_nonce($_POST['wp_rest_api_log_endpoint_meta_nonce'], 'wp_rest_api_log_save_endpoint_meta')) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        if (isset($_POST['wp_rest_api_log_route'])) {
+            update_post_meta($post_id, self::META_PREFIX . 'route', sanitize_text_field($_POST['wp_rest_api_log_route']));
+        }
+        if (isset($_POST['wp_rest_api_log_method'])) {
+            update_post_meta($post_id, self::META_PREFIX . 'method', sanitize_text_field($_POST['wp_rest_api_log_method']));
+        }
+        if (isset($_POST['wp_rest_api_log_callback'])) {
+            update_post_meta($post_id, self::META_PREFIX . 'callback', wp_kses_post($_POST['wp_rest_api_log_callback']));
+        }
+        if (isset($_POST['wp_rest_api_log_status'])) {
+            update_post_meta($post_id, self::META_PREFIX . 'status', sanitize_text_field($_POST['wp_rest_api_log_status']));
+        }
+        if (isset($_POST['wp_rest_api_log_triggers'])) {
+            update_post_meta($post_id, self::META_PREFIX . 'triggers', json_decode(stripslashes($_POST['wp_rest_api_log_triggers']), true));
+        }
+    }
+
+    /**
+     * Validate endpoint data before saving
+     */
+    public static function validate_endpoint_data($data, $postarr) {
+        if ($data['post_type'] === self::POST_TYPE) {
+            if (empty($data['post_title'])) {
+                return new WP_Error(
+                    'empty_title',
+                    __('Title cannot be empty', 'wp-rest-api-log')
+                );
+            }
+            if (empty($postarr[self::META_PREFIX . 'route'])) {
+                return new WP_Error(
+                    'empty_route',
+                    __('Route cannot be empty', 'wp-rest-api-log')
+                );
+            }
+            if (empty($postarr[self::META_PREFIX . 'method'])) {
+                return new WP_Error(
+                    'empty_method',
+                    __('Method cannot be empty', 'wp-rest-api-log')
+                );
+            }
+            if (empty($postarr[self::META_PREFIX . 'callback'])) {
+                return new WP_Error(
+                    'empty_callback',
+                    __('Callback cannot be empty', 'wp-rest-api-log')
+                );
+            }
+        }
+
+        return $data;
     }
 }
