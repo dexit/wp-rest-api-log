@@ -363,6 +363,15 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin' ) ) {
 		 */
 		static public function handle_custom_admin_list_tables() {
 			// Implementation for handling custom admin list tables
+			// This method will handle the custom admin list tables for the custom endpoints
+			// It will be responsible for rendering and managing the custom admin list tables
+			// Fetch custom admin list tables data
+			$custom_admin_list_tables = apply_filters( 'wp_rest_api_log_custom_admin_list_tables', array() );
+
+			// Render custom admin list tables
+			foreach ( $custom_admin_list_tables as $table ) {
+				echo '<div class="custom-admin-list-table">' . esc_html( $table ) . '</div>';
+			}
 		}
 
 		/**
@@ -372,6 +381,51 @@ if ( ! class_exists( 'WP_REST_API_Log_Admin' ) ) {
 		 */
 		static public function handle_custom_edit_forms() {
 			// Implementation for handling custom edit forms
+			// This method will handle the custom edit forms for the custom endpoints
+			// It will be responsible for rendering and managing the custom edit forms
+			// Fetch custom edit forms data
+			$custom_edit_forms = apply_filters( 'wp_rest_api_log_custom_edit_forms', array() );
+
+			// Render custom edit forms
+			foreach ( $custom_edit_forms as $form ) {
+				echo '<div class="custom-edit-form">' . esc_html( $form ) . '</div>';
+			}
+		}
+
+		/**
+		 * Handles custom views.
+		 *
+		 * @return void
+		 */
+		static public function handle_custom_views() {
+			// Implementation for handling custom views
+			// This method will handle the custom views for the admin list table
+			// It will be responsible for rendering and managing the custom views
+			// Fetch custom views data
+			$custom_views = apply_filters( 'wp_rest_api_log_custom_views', array() );
+
+			// Render custom views
+			foreach ( $custom_views as $view ) {
+				echo '<div class="custom-view">' . esc_html( $view ) . '</div>';
+			}
+		}
+
+		/**
+		 * Handles custom modals.
+		 *
+		 * @return void
+		 */
+		static public function handle_custom_modals() {
+			// Implementation for handling custom modals
+			// This method will handle the custom modals for the admin list table
+			// It will be responsible for rendering and managing the custom modals
+			// Fetch custom modals data
+			$custom_modals = apply_filters( 'wp_rest_api_log_custom_modals', array() );
+
+			// Render custom modals
+			foreach ( $custom_modals as $modal ) {
+				echo '<div class="custom-modal">' . esc_html( $modal ) . '</div>';
+			}
 		}
 	}
 }
