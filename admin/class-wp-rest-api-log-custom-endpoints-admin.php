@@ -353,11 +353,29 @@ class WP_REST_API_Log_Custom_Endpoints_Admin {
     // Add a new function to handle custom admin list tables
     public static function handle_custom_admin_list_tables() {
         // Implementation for handling custom admin list tables
+        // This method will handle the custom admin list tables for the custom endpoints
+        // It will be responsible for rendering and managing the custom admin list tables
+        // Fetch custom admin list tables data
+        $custom_admin_list_tables = apply_filters( 'wp_rest_api_log_custom_admin_list_tables', array() );
+
+        // Render custom admin list tables
+        foreach ( $custom_admin_list_tables as $table ) {
+            echo '<div class="custom-admin-list-table">' . esc_html( $table ) . '</div>';
+        }
     }
 
     // Add a new function to handle custom edit forms
     public static function handle_custom_edit_forms() {
         // Implementation for handling custom edit forms
+        // This method will handle the custom edit forms for the custom endpoints
+        // It will be responsible for rendering and managing the custom edit forms
+        // Fetch custom edit forms data
+        $custom_edit_forms = apply_filters( 'wp_rest_api_log_custom_edit_forms', array() );
+
+        // Render custom edit forms
+        foreach ( $custom_edit_forms as $form ) {
+            echo '<div class="custom-edit-form">' . esc_html( $form ) . '</div>';
+        }
     }
 }
 

@@ -166,7 +166,7 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 		 * Gets REST API endpoint URLs to download entry properties.
 		 *
 		 * @param object $entry REST API Log Entry.
-		 * @return array
+			* @return array
 		 */
 		static public function get_download_urls( $entry ) {
 
@@ -506,7 +506,9 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 		 */
 		static public function get_custom_views( WP_REST_Request $request ) {
 			// Implementation for getting custom views
-			return rest_ensure_response( array( 'custom_views' => 'Custom views data' ) );
+			$custom_views = apply_filters( 'wp_rest_api_log_custom_views', array() );
+
+			return rest_ensure_response( array( 'custom_views' => $custom_views ) );
 		}
 
 		/**
@@ -517,7 +519,9 @@ if ( ! class_exists( 'WP_REST_API_Log_Controller' ) ) {
 		 */
 		static public function get_custom_modals( WP_REST_Request $request ) {
 			// Implementation for getting custom modals
-			return rest_ensure_response( array( 'custom_modals' => 'Custom modals data' ) );
+			$custom_modals = apply_filters( 'wp_rest_api_log_custom_modals', array() );
+
+			return rest_ensure_response( array( 'custom_modals' => $custom_modals ) );
 		}
 
 	}
